@@ -30,3 +30,5 @@ elif operation == "/":
 else:
     print("Неверная операция!")
 ```
+
+dj[sjdbladjkbfjsvljahvbdfljavf;hqv;hfe
