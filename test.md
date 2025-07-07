@@ -9,3 +9,8 @@ classDiagram
     }
     Животное <|-- Собака
 ```
+
+
+```python
+def
+```
