@@ -66,3 +66,40 @@ gantt
     Интеграционные тесты  :e2, after b4, 12d
     Нагрузочное тестирование :crit, e3, after e2, 8d
 ```
+
+```mermaid
+sequenceDiagram
+    participant Client as Клиент (Web)
+    participant Auth as AuthService
+    participant Order as OrderSystem
+    participant Payment as PaymentGateway
+    participant Logistics as LogisticsAPI
+    participant Notify as NotificationService
+
+    %% 1. Аутентификация
+    Client ->> Auth: POST /login (credentials)
+    Auth -->> Client: JWT Token
+
+    %% 2. Создание заказа
+    Client ->> Order: POST /orders (JWT, items)
+    Order ->> Auth: GET /validate (JWT)
+    Auth -->> Order: UserID
+    Order ->> Payment: Reserve funds (UserID, amount)
+    Payment -->> Order: PaymentID (pending)
+    Order ->> Logistics: Create shipment (items)
+    Logistics -->> Order: TrackingID
+    Order -->> Client: OrderID, TrackingID
+
+    %% 3. Подтверждение платежа
+    Payment ->> Order: PATCH /orders/{id} (status=paid)
+    Order ->> Logistics: Confirm shipment (TrackingID)
+    Logistics ->> Order: ETA (days)
+    Order ->> Notify: Send email (UserID, "Order paid")
+    Notify -->> Order: OK
+
+    %% 4. Логистика
+    Logistics ->> Notify: Send SMS (UserID, "Shipped")
+    Notify -->> Logistics: OK
+    Client ->> Logistics: GET /track/{id}
+    Logistics -->> Client: Shipment status
+```
