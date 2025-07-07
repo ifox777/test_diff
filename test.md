@@ -1,3 +1,4 @@
+```mermaid        
 classDiagram
     class Животное {
         +String имя
@@ -7,3 +8,4 @@ classDiagram
         +void лаять()
     }
     Животное <|-- Собака
+```
